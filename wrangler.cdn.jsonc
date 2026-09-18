@@ -1,0 +1,34 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "vinext-prewarm-cdn",
+  "compatibility_date": "2026-09-17",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [
+    {
+      "pattern": "prewarm-cdn.hichaelmart.com",
+      "custom_domain": true
+    }
+  ],
+  "main": "vinext/server/fetch-handler",
+  "assets": {
+    "directory": "dist/cdn/client",
+    "not_found_handling": "none",
+    "binding": "ASSETS"
+  },
+  "version_metadata": {
+    "binding": "CF_VERSION_METADATA"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true
+    },
+    "traces": {
+      "enabled": true
+    }
+  }
+}

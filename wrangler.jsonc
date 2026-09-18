@@ -1,0 +1,69 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "vinext-prewarm",
+  "compatibility_date": "2026-09-17",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [
+    {
+      "pattern": "prewarm.hichaelmart.com",
+      "custom_domain": true,
+    },
+  ],
+  "main": "vinext/server/fetch-handler",
+  "assets": {
+    "directory": "dist/client",
+    "not_found_handling": "none",
+    "binding": "ASSETS",
+  },
+  "version_metadata": {
+    "binding": "CF_VERSION_METADATA",
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true,
+    },
+    "traces": {
+      "enabled": true,
+    },
+  },
+  "cache": {
+    "enabled": true,
+  },
+  "r2_buckets": [
+    {
+      "binding": "CACHE_BODIES",
+      "bucket_name": "vinext-prewarm-response-store-cache-bodies",
+    },
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "CACHE_METADATA",
+        "class_name": "CacheMetadata",
+      },
+    ],
+  },
+  "exports": {
+    "default": {
+      "type": "worker",
+      "cache": {
+        "enabled": false,
+      },
+    },
+    "ResponseStoreBinding": {
+      "type": "worker",
+      "cache": {
+        "enabled": true,
+      },
+    },
+    "CacheMetadata": {
+      "type": "durable-object",
+      "storage": "sqlite",
+    },
+  },
+}
