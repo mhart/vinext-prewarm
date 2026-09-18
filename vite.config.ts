@@ -13,7 +13,6 @@ const isCdn = cacheVariant === "cdn";
 const outputRoot = isCdn ? "dist/cdn" : "dist";
 const responseStore = responseStoreAdapter({ mode: "self-contained" });
 const workersCache = cdnAdapter();
-const selectedCdnAdapter = isCdn ? workersCache : responseStore.cdn;
 
 export default defineConfig({
   plugins: [
@@ -24,17 +23,6 @@ export default defineConfig({
       ssrOutDir: `${outputRoot}/server/ssr`,
       prerender: { routes: "*" },
     }),
-    // @vinext/cloudflare beta.8 relies on Vinext's host-entry transform to
-    // export adapter-owned entrypoints. Vinext currently runs that transform
-    // during builds only, so apply it in development too.
-    {
-      name: "vinext-prewarm:cache-dev-entrypoints",
-      apply: "serve",
-      transform(code, id) {
-        const transformed = selectedCdnAdapter.output.transformHostEntry({ code, id });
-        return transformed === null ? null : { code: transformed, map: null };
-      },
-    },
     cloudflare({
       configPath: isCdn ? "./wrangler.cdn.jsonc" : "./wrangler.jsonc",
       viteEnvironment: {

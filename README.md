@@ -21,10 +21,15 @@ Workers Response Store:
 
 Rendered pages include timestamps and UUIDs so cache reuse can be distinguished from a rerender.
 
-The serve-only plugin in `vite.config.ts` applies the Response Store's host-entry transform during
-development. This works around a published-beta issue where Vinext applies that transform during
-production builds only. Miniflare does not currently expose `ctx.cache`, so it logs a nonfatal
-cache-purge warning; use a deployed Worker to test Workers Cache and prewarming behavior.
+This branch uses the Vinext PR builds that expose Response Store entrypoints during development,
+stabilize cached variant selection, and coalesce Response Store metadata misses. Miniflare does not
+currently expose `ctx.cache`, so use a deployed Worker to test Workers Cache and prewarming behavior.
+
+The temporary package pins are Vinext [#3306](https://github.com/cloudflare/vinext/pull/3306),
+`@vinext/cloudflare` [#3308](https://github.com/cloudflare/vinext/pull/3308), and Response Store
+[#3304](https://github.com/cloudflare/vinext/pull/3304). The `package.json` override is intentional:
+it prevents the Cloudflare PR artifact from installing its own older nested Response Store build.
+Use `npm install --allow-remote=all` until equivalent npm releases are available.
 
 ## One-time setup
 
